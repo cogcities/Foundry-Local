@@ -80,3 +80,5 @@ export class FoundryLocalManager extends FoundryLocalManagerBase {
 }
 
 export * from './types.js'
+export * from './cognitive-types.js'
+export { CognitiveForge } from './cognitive-forge.js'
