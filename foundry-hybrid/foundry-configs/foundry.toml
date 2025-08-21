@@ -1,0 +1,74 @@
+# 🏭 Foundry Hybrid Configuration for Cognitive Cities
+# Optimized for AI-enhanced smart contract development
+
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['lib']
+gas_limit = 9223372036854775807
+gas_price = 3000000000
+optimizer = true
+optimizer_runs = 200
+via_ir = false
+force = false
+evm_version = 'london'
+
+[profile.cognitive-city]
+src = 'src'
+out = 'out'
+libs = ['lib']
+optimizer = true
+optimizer_runs = 1000
+gas_limit = 30000000
+gas_price = 1000000000
+# AI-enhanced optimizations
+via_ir = true
+extra_output = ["storageLayout", "devdoc", "userdoc"]
+# Enable detailed compilation artifacts for AI analysis
+extra_output_files = ["metadata"]
+# Cognitive cities integration settings
+fs_permissions = [{ access = "read-write", path = "./projects" }]
+
+[profile.cognitive-city-test]
+src = 'src'
+out = 'out'
+libs = ['lib']
+optimizer = true
+optimizer_runs = 1000
+gas_limit = 30000000
+gas_price = 1000000000
+via_ir = true
+# Enhanced testing for AI copilot
+fuzz = { runs = 1000, max_test_rejects = 65536 }
+invariant = { runs = 256, depth = 15, fail_on_revert = false }
+
+[rpc_endpoints]
+local = "http://localhost:8545"
+staging = "https://staging-rpc.cogcities.dev"
+production = "https://rpc.cogcities.dev"
+# Neural transport RPC endpoints
+neural_transport = "ws://localhost:4000"
+
+[etherscan]
+# Placeholder for future integration
+cognitive_cities = { key = "${COGCITIES_ETHERSCAN_KEY}", chain = 1337, url = "https://explorer.cogcities.dev/api" }
+
+# AI Copilot integration settings
+[cognitive_cities]
+ai_copilot_enabled = true
+neural_transport_enabled = true
+knowledge_sync_enabled = true
+city_id = "cogcities-main"
+district = "manufacturing"
+
+# Security scanning configuration
+[security]
+slither_enabled = true
+mythril_enabled = true
+ai_security_scan = true
+
+# Gas optimization settings
+[optimization]
+ai_gas_optimizer = true
+cross_city_patterns = true
+learning_enabled = true
