@@ -1,0 +1,77 @@
+# 🏭 Foundry Hybrid Development Compose Override
+# Optimized for local development with hot reloading
+
+version: '3.8'
+
+services:
+  foundry-hybrid:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: cognitive-runtime  # Use earlier stage for faster dev builds
+    volumes:
+      # Hot reload for development
+      - ./ai-copilot:/opt/ai-copilot
+      - ./neural-transport:/opt/neural-transport
+      - ./monitoring:/opt/monitoring
+      - ./scripts:/opt/scripts
+      - ./foundry-configs:/opt/foundry-configs
+    environment:
+      - RUST_LOG=debug
+      - LOG_LEVEL=debug
+      - HOT_RELOAD=true
+    ports:
+      - "8545:8545"
+      - "3000:3000" 
+      - "8080:8080"
+      - "9090:9090"
+    restart: "no"  # Don't auto-restart in dev
+
+  neural-transport-hub:
+    volumes:
+      - ./neural-transport:/app
+    environment:
+      - LOG_LEVEL=debug
+      - NODE_ENV=development
+    restart: "no"
+    command: ["npm", "run", "dev"]
+
+  ai-copilot:
+    volumes:
+      - ./ai-copilot:/app
+    environment:
+      - LOG_LEVEL=debug
+      - PYTHONPATH=/app
+    restart: "no"
+    command: ["python", "-m", "uvicorn", "foundry_copilot:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+
+  monitoring:
+    volumes:
+      - ./monitoring:/app
+    environment:
+      - LOG_LEVEL=debug
+      - PYTHONPATH=/app
+    restart: "no"
+    command: ["python", "-m", "uvicorn", "dashboard:app", "--host", "0.0.0.0", "--port", "9090", "--reload"]
+
+  knowledge-base:
+    volumes:
+      - ./knowledge-base:/app
+    environment:
+      - LOG_LEVEL=debug
+      - PYTHONPATH=/app
+    restart: "no"
+    command: ["python", "-m", "uvicorn", "knowledge_base:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+
+# Override volume mounts for development
+volumes:
+  foundry-data:
+    driver: local
+  knowledge-data:
+    driver: local
+  monitoring-data:
+    driver: local
+  transport-data:
+    driver: local
+  copilot-models:
+    driver: local
