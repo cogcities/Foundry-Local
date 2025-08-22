@@ -1,0 +1,153 @@
+# 🏭 Foundry Hybrid Manufacturing District - Staging Deployment
+# Reduced resources for staging environment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foundry-hybrid-staging
+  namespace: cognitive-cities-staging
+  labels:
+    app: foundry-hybrid
+    district: manufacturing
+    city: cogcities
+    environment: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: foundry-hybrid
+      environment: staging
+  template:
+    metadata:
+      labels:
+        app: foundry-hybrid
+        district: manufacturing
+        environment: staging
+    spec:
+      containers:
+      - name: foundry-hybrid
+        image: ghcr.io/cogcities/foundry-hybrid:staging
+        ports:
+        - containerPort: 8545
+          name: anvil-rpc
+        - containerPort: 3000
+          name: web-interface
+        - containerPort: 8080
+          name: ai-copilot
+        - containerPort: 9090
+          name: monitoring
+        env:
+        - name: FOUNDRY_PROFILE
+          value: "cognitive-city-staging"
+        - name: NEURAL_TRANSPORT_ENABLED
+          value: "true"
+        - name: AI_COPILOT_ENABLED
+          value: "true"
+        - name: CITY_ID
+          value: "cogcities-staging"
+        - name: RUST_LOG
+          value: "debug"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        volumeMounts:
+        - name: foundry-data
+          mountPath: /data
+        - name: config
+          mountPath: /workspace/configs
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8545
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8545
+          initialDelaySeconds: 15
+          periodSeconds: 10
+      volumes:
+      - name: foundry-data
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: foundry-hybrid-staging-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: foundry-hybrid-staging-service
+  namespace: cognitive-cities-staging
+spec:
+  selector:
+    app: foundry-hybrid
+    environment: staging
+  ports:
+  - name: anvil-rpc
+    port: 8545
+    targetPort: 8545
+  - name: web-interface
+    port: 3000
+    targetPort: 3000
+  - name: ai-copilot
+    port: 8080
+    targetPort: 8080
+  - name: monitoring
+    port: 9090
+    targetPort: 9090
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: foundry-hybrid-staging-config
+  namespace: cognitive-cities-staging
+data:
+  foundry.toml: |
+    [profile.cognitive-city-staging]
+    src = 'src'
+    out = 'out'
+    libs = ['lib']
+    optimizer = true
+    optimizer_runs = 200
+    gas_limit = 30000000
+    gas_price = 1000000000
+    via_ir = false
+    
+    [rpc_endpoints]
+    local = "http://localhost:8545"
+    staging = "https://staging-rpc.cogcities.dev"
+    
+    [cognitive_cities]
+    ai_copilot_enabled = true
+    neural_transport_enabled = true
+    city_id = "cogcities-staging"
+    district = "manufacturing"
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: foundry-hybrid-staging-ingress
+  namespace: cognitive-cities-staging
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: foundry-staging.cogcities.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: foundry-hybrid-staging-service
+            port:
+              number: 3000

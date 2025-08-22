@@ -1,0 +1,172 @@
+# 🏭 Foundry Hybrid Manufacturing District - Docker Compose
+# Orchestrates the complete cognitive cities foundry ecosystem
+
+version: '3.8'
+
+services:
+  foundry-hybrid:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "8545:8545"    # Anvil RPC
+      - "3000:3000"    # Web interface
+      - "8080:8080"    # AI copilot API
+      - "9090:9090"    # Monitoring dashboard
+    volumes:
+      - foundry-data:/data
+      - ./projects:/workspace/projects
+      - ./configs:/workspace/configs
+      - ./logs:/workspace/logs
+    environment:
+      - FOUNDRY_PROFILE=cognitive-city
+      - NEURAL_TRANSPORT_ENABLED=true
+      - AI_COPILOT_ENABLED=true
+      - CITY_ID=cogcities-main
+      - RUST_LOG=info
+    networks:
+      - cognitive-city-network
+    depends_on:
+      - neural-transport-hub
+      - knowledge-base
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  neural-transport-hub:
+    image: cognitive-cities/neural-transport:latest
+    build:
+      context: ./neural-transport
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"    # WebSocket server
+      - "4001:4001"    # HTTP API
+    environment:
+      - HUB_ID=foundry-manufacturing-district
+      - CONNECTED_CITIES=cogpilot,cosmo,cogcities
+      - LOG_LEVEL=info
+    volumes:
+      - transport-data:/data
+    networks:
+      - cognitive-city-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  knowledge-base:
+    image: cognitive-cities/knowledge-base:latest
+    build:
+      context: ./knowledge-base
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"    # Knowledge API
+    volumes:
+      - knowledge-data:/data
+    environment:
+      - KB_MODE=foundry-specialized
+      - SYNC_ENABLED=true
+      - NEURAL_TRANSPORT_URL=ws://neural-transport-hub:4000
+    networks:
+      - cognitive-city-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  ai-copilot:
+    image: cognitive-cities/ai-copilot:latest
+    build:
+      context: ./ai-copilot
+      dockerfile: Dockerfile
+    ports:
+      - "6000:6000"    # Copilot API
+    environment:
+      - COPILOT_MODE=foundry-enhanced
+      - FOUNDRY_RPC=http://foundry-hybrid:8545
+      - NEURAL_TRANSPORT=ws://neural-transport-hub:4000
+      - KNOWLEDGE_BASE=http://knowledge-base:5000
+    volumes:
+      - copilot-models:/models
+    networks:
+      - cognitive-city-network
+    depends_on:
+      - foundry-hybrid
+      - neural-transport-hub
+      - knowledge-base
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  monitoring:
+    image: cognitive-cities/monitoring:latest
+    build:
+      context: ./monitoring
+      dockerfile: Dockerfile
+    ports:
+      - "7000:7000"    # Monitoring dashboard
+    volumes:
+      - monitoring-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - MONITOR_SERVICES=foundry-hybrid,neural-transport-hub,knowledge-base,ai-copilot
+      - GRAFANA_ADMIN_PASSWORD=admin
+      - PROMETHEUS_RETENTION=30d
+    networks:
+      - cognitive-city-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  foundry-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/foundry
+  knowledge-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/knowledge
+  monitoring-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/monitoring
+  transport-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/transport
+  copilot-models:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/models
+
+networks:
+  cognitive-city-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

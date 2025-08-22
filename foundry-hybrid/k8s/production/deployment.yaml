@@ -1,0 +1,276 @@
+# 🏭 Foundry Hybrid Manufacturing District - Kubernetes Deployment
+# Production-ready deployment for cognitive cities
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foundry-hybrid-manufacturing
+  namespace: cognitive-cities
+  labels:
+    app: foundry-hybrid
+    district: manufacturing
+    city: cogcities
+    component: foundry-core
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: foundry-hybrid
+  template:
+    metadata:
+      labels:
+        app: foundry-hybrid
+        district: manufacturing
+        component: foundry-core
+    spec:
+      containers:
+      - name: foundry-hybrid
+        image: ghcr.io/cogcities/foundry-hybrid:latest
+        ports:
+        - containerPort: 8545
+          name: anvil-rpc
+          protocol: TCP
+        - containerPort: 3000
+          name: web-interface
+          protocol: TCP
+        - containerPort: 8080
+          name: ai-copilot
+          protocol: TCP
+        - containerPort: 9090
+          name: monitoring
+          protocol: TCP
+        env:
+        - name: FOUNDRY_PROFILE
+          value: "cognitive-city-k8s"
+        - name: NEURAL_TRANSPORT_ENABLED
+          value: "true"
+        - name: AI_COPILOT_ENABLED
+          value: "true"
+        - name: CITY_ID
+          value: "cogcities-main"
+        - name: RUST_LOG
+          value: "info"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        volumeMounts:
+        - name: foundry-data
+          mountPath: /data
+        - name: config
+          mountPath: /workspace/configs
+        - name: projects
+          mountPath: /workspace/projects
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8545
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8545
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8545
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 12
+      volumes:
+      - name: foundry-data
+        persistentVolumeClaim:
+          claimName: foundry-data-pvc
+      - name: config
+        configMap:
+          name: foundry-hybrid-config
+      - name: projects
+        persistentVolumeClaim:
+          claimName: foundry-projects-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: foundry-hybrid-service
+  namespace: cognitive-cities
+  labels:
+    app: foundry-hybrid
+    district: manufacturing
+spec:
+  selector:
+    app: foundry-hybrid
+  ports:
+  - name: anvil-rpc
+    port: 8545
+    targetPort: 8545
+    protocol: TCP
+  - name: web-interface
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
+  - name: ai-copilot
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  - name: monitoring
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: foundry-hybrid-config
+  namespace: cognitive-cities
+data:
+  foundry.toml: |
+    [profile.cognitive-city-k8s]
+    src = 'src'
+    out = 'out'
+    libs = ['lib']
+    optimizer = true
+    optimizer_runs = 1000
+    gas_limit = 30000000
+    gas_price = 1000000000
+    via_ir = true
+    extra_output = ["storageLayout", "devdoc", "userdoc"]
+    
+    [rpc_endpoints]
+    local = "http://localhost:8545"
+    production = "https://rpc.cogcities.dev"
+    
+    [cognitive_cities]
+    ai_copilot_enabled = true
+    neural_transport_enabled = true
+    knowledge_sync_enabled = true
+    city_id = "cogcities-main"
+    district = "manufacturing"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: foundry-data-pvc
+  namespace: cognitive-cities
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: fast-ssd
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: foundry-projects-pvc
+  namespace: cognitive-cities
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: shared-storage
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: foundry-hybrid-ingress
+  namespace: cognitive-cities
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - foundry.cogcities.dev
+    secretName: foundry-hybrid-tls
+  rules:
+  - host: foundry.cogcities.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: foundry-hybrid-service
+            port:
+              number: 3000
+      - path: /rpc
+        pathType: Prefix
+        backend:
+          service:
+            name: foundry-hybrid-service
+            port:
+              number: 8545
+      - path: /copilot
+        pathType: Prefix
+        backend:
+          service:
+            name: foundry-hybrid-service
+            port:
+              number: 8080
+      - path: /monitoring
+        pathType: Prefix
+        backend:
+          service:
+            name: foundry-hybrid-service
+            port:
+              number: 9090
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: foundry-hybrid-pdb
+  namespace: cognitive-cities
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: foundry-hybrid
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: foundry-hybrid-hpa
+  namespace: cognitive-cities
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: foundry-hybrid-manufacturing
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
