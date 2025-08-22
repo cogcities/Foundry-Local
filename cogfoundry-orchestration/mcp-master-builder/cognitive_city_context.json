@@ -1,0 +1,262 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cognitive City Context",
+  "description": "MCP context definition for cognitive cities (GitHub organizations)",
+  "type": "object",
+  "required": [
+    "context_type",
+    "city_identity",
+    "specializations",
+    "neural_transport_channels",
+    "cognitive_state"
+  ],
+  "properties": {
+    "context_type": {
+      "type": "string",
+      "const": "cognitive_city_context",
+      "description": "Identifies this as a cognitive city context"
+    },
+    "city_identity": {
+      "type": "object",
+      "required": ["name", "namespace", "role"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of the cognitive city"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "GitHub organization namespace (e.g., github.com/organizations/cogcities)"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["urban_planning", "ai_development", "enterprise_coordination", "orchestration"],
+          "description": "Primary role in the cognitive cities ecosystem"
+        },
+        "established": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this cognitive city was established"
+        }
+      }
+    },
+    "specializations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "urban_planning",
+          "infrastructure_development", 
+          "governance_protocols",
+          "ai_development",
+          "neural_architecture",
+          "cognitive_protocols",
+          "enterprise_ordering",
+          "strategic_coordination",
+          "orchestration_engine",
+          "distributed_deployment"
+        ]
+      },
+      "description": "Areas of specialization for this cognitive city"
+    },
+    "neural_transport_channels": {
+      "type": "object",
+      "description": "Communication channels to other cognitive cities",
+      "patternProperties": {
+        "^[a-zA-Z0-9_-]+$": {
+          "type": "object",
+          "required": ["target_city", "channel_type", "bandwidth"],
+          "properties": {
+            "target_city": {
+              "type": "string",
+              "description": "Target cognitive city namespace"
+            },
+            "channel_type": {
+              "type": "string",
+              "enum": ["coordination", "collaboration", "governance", "transport"],
+              "description": "Type of communication channel"
+            },
+            "bandwidth": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "ultra"],
+              "description": "Channel bandwidth capacity"
+            },
+            "protocols": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["websocket", "http", "github_api", "issue_linking", "pr_coordination"]
+              },
+              "description": "Supported communication protocols"
+            }
+          }
+        }
+      }
+    },
+    "cognitive_state": {
+      "type": "object",
+      "required": ["maturity_level", "activation_landscape"],
+      "properties": {
+        "maturity_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Cognitive maturity level (0.0 = nascent, 1.0 = fully evolved)"
+        },
+        "activation_landscape": {
+          "type": "object",
+          "description": "Current activation levels across different cognitive domains",
+          "patternProperties": {
+            "^[a-zA-Z0-9_-]+$": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0
+            }
+          }
+        },
+        "memory_patterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["pattern_id", "priority", "encoding_strength"],
+            "properties": {
+              "pattern_id": {
+                "type": "string",
+                "description": "Unique identifier for memory pattern"
+              },
+              "priority": {
+                "type": "number",
+                "minimum": 0.0,
+                "maximum": 1.0,
+                "description": "Priority level for this memory pattern"
+              },
+              "encoding_strength": {
+                "type": "number", 
+                "minimum": 0.0,
+                "maximum": 1.0,
+                "description": "How strongly this pattern is encoded"
+              },
+              "context_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Context tags for pattern retrieval"
+              }
+            }
+          }
+        },
+        "evolutionary_trajectory": {
+          "type": "object",
+          "properties": {
+            "autognosis_level": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0,
+              "description": "Self-knowledge and introspection capability"
+            },
+            "autogenesis_level": {
+              "type": "number",
+              "minimum": 0.0, 
+              "maximum": 1.0,
+              "description": "Self-creation and evolution capability"
+            },
+            "emergence_indicators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Signs of emergent AGI capabilities"
+            }
+          }
+        }
+      }
+    },
+    "operational_context": {
+      "type": "object",
+      "properties": {
+        "github_integration": {
+          "type": "object",
+          "properties": {
+            "repositories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Key repositories in this cognitive city"
+            },
+            "knowledge_base": {
+              "type": "array", 
+              "items": {
+                "type": "string"
+              },
+              "description": "Repositories included in CopIlot knowledge base"
+            },
+            "custom_instructions": {
+              "type": "boolean",
+              "description": "Whether custom CopIlot instructions are configured"
+            }
+          }
+        },
+        "foundry_integration": {
+          "type": "object",
+          "properties": {
+            "local_deployment": {
+              "type": "boolean",
+              "description": "Whether Foundry-Local is deployed in this city"
+            },
+            "model_endpoints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Available model endpoints"
+            },
+            "sdk_integration": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["python", "javascript", "typescript", "rust", "csharp"]
+              },
+              "description": "Integrated SDK languages"
+            }
+          }
+        }
+      }
+    },
+    "copilot_guidance": {
+      "type": "object",
+      "description": "Specific guidance for CopIlot when operating in this cognitive city context",
+      "properties": {
+        "architectural_principles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Key architectural principles to apply"
+        },
+        "code_patterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Preferred code patterns and conventions"
+        },
+        "collaboration_protocols": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Protocols for cross-city collaboration"
+        },
+        "evolution_strategies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Strategies for adaptive evolution"
+        }
+      }
+    }
+  }
+}
