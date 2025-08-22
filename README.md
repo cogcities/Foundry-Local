@@ -2,28 +2,111 @@
   <picture align="center">
     <source media="(prefers-color-scheme: dark)" srcset="media/icons/ai_studio_icon_white.svg">
     <source media="(prefers-color-scheme: light)" srcset="media/icons/ai_studio_icon_black.svg">
-    <img alt="AI Foundry icon." src="media/icons/ai_studio_icon_black.svg" height="100" style="max-width: 100%;">
+    <img alt="CogFoundry Orchestration Engine icon." src="media/icons/ai_studio_icon_black.svg" height="100" style="max-width: 100%;">
   </picture>
 <div id="user-content-toc">
   <ul align="center" style="list-style: none;">
     <summary>
-      <h1>Foundry Local</h1><br>
-     <h3><a href="https://aka.ms/foundry-local-installer">Download</a> | <a href="https://aka.ms/foundry-local-docs">Documentation</a> | <a href="https://aka.ms/foundry-local-discord">Discord</a></h3>
+      <h1>CogFoundry Orchestration Engine</h1><br>
+      <h2>Principal Architect of the Cognitive Cities Ecosystem</h2><br>
+     <h3><a href="https://aka.ms/foundry-local-installer">Download</a> | <a href="./cogfoundry-orchestration/README.md">CogFoundry Docs</a> | <a href="https://aka.ms/foundry-local-discord">Discord</a></h3>
     </summary>
   </ul>
 </div>
 </div>
 
-## 👋 Welcome to Foundry Local
+## 🏗️ Welcome to CogFoundry
 
-Foundry Local brings the power of Azure AI Foundry to your local device **without requiring an Azure subscription**. It allows you to:
+**The Evolution of Foundry Local into a Cognitive Cities Orchestration Engine**
+
+CogFoundry transforms the power of local AI into a distributed cognitive architecture, enabling the deployment of AI Neural Architectures across Networks of Cognitive Cities. Built upon Foundry Local's foundation, CogFoundry adds:
+
+- **Cognitive Cities Integration**: Coordinate AI development across GitHub organizations
+- **Neural Transport Protocols**: High-bandwidth communication between cognitive cities  
+- **MCP Master Builder**: Custom protocols enabling CogPilot cognitive development
+- **Meta-LSP Extensions**: Introspective development with self-designing systems
+- **Distributed AGI Evolution**: Systematic progression toward Autognosis & Autogenesis
+
+## 🧠 Cognitive Architecture
+
+```mermaid
+graph TB
+    subgraph "CogFoundry Orchestration Layer"
+        CO[CogFoundry Orchestration]
+        MCP[MCP Master Builder]
+        LSP[Meta-LSP Protocols]
+        VD[VM-Daemon MLOps]
+    end
+    
+    subgraph "Cognitive Cities Network"  
+        CC[CogCities Org]
+        CP[CogPilot Org]
+        CE[Cosmo Enterprise]
+    end
+    
+    subgraph "Foundry Local Foundation"
+        FL[Foundry Local Runtime]
+        SDK[Python/JS/TS SDKs]
+        API[OpenAI-Compatible API]
+    end
+    
+    CO --> MCP
+    CO --> LSP
+    CO --> VD
+    
+    MCP --> CC
+    MCP --> CP
+    MCP --> CE
+    
+    LSP --> FL
+    VD --> SDK
+    SDK --> API
+```
+
+## 🚀 CogFoundry Quickstart
+
+### Traditional Foundry Local Usage
+
+CogFoundry maintains full backward compatibility with Foundry Local:
+
+1. **Install Foundry Local:**
+    - **Windows**: Install Foundry Local for your architecture (x64 or arm64):
 
 - Run Generative AI models directly on your local hardware - no sign-up required.
 - Keep all data processing on-device for enhanced privacy and security
 - Integrate models with your applications through an OpenAI-compatible API
 - Optimize performance using ONNX Runtime and hardware acceleration
 
-## 🚀 Quickstart
+### CogFoundry Orchestration Usage
+
+For cognitive cities development and distributed AI orchestration:
+
+1. **Initialize CogFoundry Orchestration:**
+   ```bash
+   cd cogfoundry-orchestration
+   python orchestration-engine.py --init
+   ```
+
+2. **Connect to Cognitive Cities:**
+   ```python
+   from cogfoundry_orchestration import CogFoundryOrchestrationEngine
+   
+   orchestrator = CogFoundryOrchestrationEngine()
+   await orchestrator.initialize()
+   
+   # Deploy AI architecture across cognitive cities
+   await orchestrator.orchestrate_deployment({
+       "name": "distributed_neural_network",
+       "target_cities": ["cogcities", "cogpilot", "cosmo"]
+   })
+   ```
+
+3. **Enable CogPilot Integration:**
+   - Configure MCP Master Builder protocols
+   - Install Meta-LSP extensions for your IDE
+   - Connect to neural transport channels
+
+## 🚀 Traditional Foundry Local Quickstart
 
 1. **Install Foundry Local:**
     - **Windows**: Install Foundry Local for your architecture (x64 or arm64):

@@ -1,0 +1,324 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GitHub CopIlot Integration",
+  "description": "MCP integration mapping for GitHub CopIlot with cognitive cities",
+  "type": "object",
+  "required": [
+    "integration_type",
+    "copilot_features",
+    "custom_instructions_mapping",
+    "knowledge_base_configuration"
+  ],
+  "properties": {
+    "integration_type": {
+      "type": "string",
+      "const": "github_copilot_mcp",
+      "description": "Identifies this as a CopIlot MCP integration"
+    },
+    "copilot_features": {
+      "type": "object",
+      "required": ["chat", "completion", "context_awareness"],
+      "properties": {
+        "chat": {
+          "type": "object",
+          "properties": {
+            "cognitive_city_awareness": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable cognitive city context in chat"
+            },
+            "neural_transport_suggestions": {
+              "type": "boolean", 
+              "default": true,
+              "description": "Suggest neural transport patterns"
+            },
+            "ecosystem_coordination": {
+              "type": "boolean",
+              "default": true,
+              "description": "Provide ecosystem coordination guidance"
+            }
+          }
+        },
+        "completion": {
+          "type": "object",
+          "properties": {
+            "cognitive_patterns": {
+              "type": "boolean",
+              "default": true,
+              "description": "Complete using cognitive architecture patterns"
+            },
+            "fractal_organization": {
+              "type": "boolean",
+              "default": true, 
+              "description": "Apply fractal organizational principles"
+            },
+            "introspective_protocols": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include introspective protocol patterns"
+            }
+          }
+        },
+        "context_awareness": {
+          "type": "object",
+          "properties": {
+            "current_city": {
+              "type": "string",
+              "description": "Current cognitive city context"
+            },
+            "connected_cities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Connected cognitive cities"
+            },
+            "orchestration_state": {
+              "type": "string",
+              "enum": ["local", "distributed", "orchestrated"],
+              "description": "Current orchestration state"
+            }
+          }
+        }
+      }
+    },
+    "custom_instructions_mapping": {
+      "type": "object",
+      "description": "Mapping of cognitive city concepts to CopIlot custom instructions",
+      "properties": {
+        "cognitive_ecology": {
+          "type": "object",
+          "properties": {
+            "instruction_text": {
+              "type": "string",
+              "description": "Custom instruction text for cognitive ecology"
+            },
+            "trigger_patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Code patterns that trigger this instruction"
+            },
+            "response_modifiers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "How to modify responses when this context is active"
+            }
+          }
+        },
+        "neural_transport": {
+          "type": "object",
+          "properties": {
+            "instruction_text": {
+              "type": "string",
+              "description": "Custom instruction text for neural transport protocols"
+            },
+            "api_patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "API patterns for neural transport"
+            },
+            "integration_points": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Integration points with existing systems"
+            }
+          }
+        },
+        "particle_swarm_optimization": {
+          "type": "object",
+          "properties": {
+            "instruction_text": {
+              "type": "string", 
+              "description": "Custom instruction text for particle swarm patterns"
+            },
+            "algorithm_patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Algorithm patterns for distributed optimization"
+            },
+            "coordination_protocols": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Coordination protocols between agents"
+            }
+          }
+        },
+        "fractal_organization": {
+          "type": "object",
+          "properties": {
+            "instruction_text": {
+              "type": "string",
+              "description": "Custom instruction text for fractal patterns"
+            },
+            "structural_patterns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Structural patterns that repeat at different scales"
+            },
+            "scaling_principles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Principles for scaling across organizational levels"
+            }
+          }
+        }
+      }
+    },
+    "knowledge_base_configuration": {
+      "type": "object",
+      "description": "Configuration for CopIlot knowledge base integration",
+      "properties": {
+        "repository_selection": {
+          "type": "object",
+          "properties": {
+            "tier_1_repositories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Core repositories for immediate context"
+            },
+            "tier_2_repositories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Extended repositories for broader context"
+            },
+            "cross_org_repositories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Repositories from connected cognitive cities"
+            }
+          }
+        },
+        "context_enhancement": {
+          "type": "object",
+          "properties": {
+            "progressive_memory_embedding": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable progressive memory pattern embedding"
+            },
+            "salience_monitoring": {
+              "type": "boolean",
+              "default": true,
+              "description": "Monitor and prioritize salient patterns"
+            },
+            "evolutionary_tracking": {
+              "type": "boolean",
+              "default": true,
+              "description": "Track evolutionary changes in codebase"
+            }
+          }
+        }
+      }
+    },
+    "response_enhancement": {
+      "type": "object",
+      "description": "How to enhance CopIlot responses with cognitive city context",
+      "properties": {
+        "architectural_reasoning": {
+          "type": "object",
+          "properties": {
+            "include_reasoning": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include architectural reasoning in responses"
+            },
+            "cognitive_patterns": {
+              "type": "boolean",
+              "default": true,
+              "description": "Reference cognitive patterns when relevant"
+            },
+            "ecosystem_impact": {
+              "type": "boolean",
+              "default": true,
+              "description": "Consider impact on broader ecosystem"
+            }
+          }
+        },
+        "evolution_guidance": {
+          "type": "object",
+          "properties": {
+            "adaptive_suggestions": {
+              "type": "boolean",
+              "default": true,
+              "description": "Provide adaptive evolution suggestions"
+            },
+            "emergence_detection": {
+              "type": "boolean",
+              "default": true,
+              "description": "Detect signs of emergent behaviors"
+            },
+            "self_design_protocols": {
+              "type": "boolean",
+              "default": true,
+              "description": "Suggest self-designing protocol patterns"
+            }
+          }
+        }
+      }
+    },
+    "note_to_self_integration": {
+      "type": "object",
+      "description": "Integration of note2self introspective documentation",
+      "properties": {
+        "automatic_notes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically generate note2self entries"
+        },
+        "context_anchors": {
+          "type": "boolean",
+          "default": true,
+          "description": "Create context anchors for future reference"
+        },
+        "evolutionary_insights": {
+          "type": "boolean",
+          "default": true,
+          "description": "Document evolutionary insights and patterns"
+        },
+        "note_patterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trigger": {
+                "type": "string",
+                "description": "What triggers this type of note"
+              },
+              "template": {
+                "type": "string",
+                "description": "Template for the note content"
+              },
+              "placement": {
+                "type": "string",
+                "enum": ["inline", "header", "footer", "separate_file"],
+                "description": "Where to place the note"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
